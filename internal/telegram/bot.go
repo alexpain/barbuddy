@@ -29,14 +29,26 @@ func (b *Bot) Update() error {
 	updates := b.GetUpdatesChan(u)
 
 	for update := range updates {
-		if update.Message != nil {
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
-
-			// Отправка ответа
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Hello, "+update.Message.From.FirstName+"!")
-			_, err := b.Send(msg)
-			if err != nil {
-				return err
+		if update.Message.IsCommand() {
+			switch update.Message.Command() {
+			case "start":
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Welcome!")
+				_, err := b.Send(msg)
+				if err != nil {
+					return err
+				}
+			case "help":
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "List of available commands: /start, /help")
+				_, err := b.Send(msg)
+				if err != nil {
+					return err
+				}
+			default:
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Unknown command")
+				_, err := b.Send(msg)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
