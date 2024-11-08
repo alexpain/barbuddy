@@ -2,7 +2,9 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"github.com/alexpain/barbuddy/internal/config"
+	"github.com/alexpain/barbuddy/internal/database"
 	"github.com/alexpain/barbuddy/internal/telegram"
 	"golang.org/x/sync/errgroup"
 	"log"
@@ -11,17 +13,29 @@ import (
 type Application struct {
 	conf *config.Config
 	bot  *telegram.Bot
+	db   *database.Database
 }
 
 func New(ctx context.Context, conf *config.Config) (*Application, error) {
-	bot, err := telegram.NewBot(conf.Bot.Token)
+	db, err := database.New("./cocktails.db")
+	if err != nil {
+		log.Fatalf("Error initializing database: %v", err)
+	}
+
+	bot, err := telegram.NewBot(conf.Bot.Token, db)
 	if err != nil {
 		return nil, err
 	}
 
+	if err := db.CreateTable(); err != nil {
+		log.Fatalf("Error creating table: %v", err)
+	}
+	fmt.Println("Table created or already exists.")
+
 	return &Application{
 		conf: conf,
 		bot:  bot,
+		db:   db,
 	}, nil
 }
 
@@ -41,6 +55,7 @@ func (a *Application) Run(ctx context.Context) error {
 
 func (a *Application) Stop(ctx context.Context) error {
 	a.bot.StopReceivingUpdates()
+	a.db.Stop()
 
 	return nil
 }
