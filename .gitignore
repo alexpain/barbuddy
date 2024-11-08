@@ -18,9 +18,6 @@ build/
 /pkg/mod/
 /pkg/sumdb/
 
-# Dependency files
-go.sum
-
 # Temporary files
 *.log
 *.out
