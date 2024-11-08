@@ -47,6 +47,6 @@ func main() {
 	})
 
 	if err := g.Wait(); err != nil {
-		log.Panicf("something went wrong", slog.String("error", err.Error()))
+		log.Panic("something went wrong", slog.String("error", err.Error()))
 	}
 }
