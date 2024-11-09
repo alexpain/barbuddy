@@ -30,6 +30,7 @@ func (db *Database) CreateTable() error {
 	createTablesSQL := `
     CREATE TABLE IF NOT EXISTS recipes (
         recipe_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
         name TEXT NOT NULL,
         description TEXT
     );
@@ -79,9 +80,9 @@ func (db *Database) CreateTable() error {
 	return nil
 }
 
-// InsertRecipe inserts a new recipe into the table
+// InsertNewRecipe inserts a new recipe into the table
 func (db *Database) InsertNewRecipe(recipe Recipe) (int64, error) {
-	res, err := db.Exec("INSERT INTO recipes (name, description) VALUES (?, ?)", recipe.Name, recipe.Description)
+	res, err := db.Exec("INSERT INTO recipes (name, user_id, description) VALUES (?, ?, ?)", recipe.Name, recipe.UserId, recipe.Description)
 	if err != nil {
 		return 0, fmt.Errorf("failed to insert recipe: %v", err)
 	}
@@ -180,7 +181,6 @@ func (db *Database) GetAllRecipes() ([]RecipeWithDetails, error) {
 	return recipes, nil
 }
 
-// Вспомогательная функция для получения ингредиентов
 func (db *Database) getIngredients(recipeID int64, table string) ([]Ingredient, error) {
 	rows, err := db.Query(fmt.Sprintf("SELECT name, quantity FROM %s WHERE recipe_id = ?", table), recipeID)
 	if err != nil {
@@ -217,7 +217,6 @@ func (db *Database) getGarnishes(recipeID int64) ([]string, error) {
 	return garnishes, nil
 }
 
-// Вспомогательная функция для получения посуды
 func (db *Database) getUtensils(recipeID int64) ([]string, error) {
 	rows, err := db.Query("SELECT name FROM utensils WHERE recipe_id = ?", recipeID)
 	if err != nil {
@@ -236,7 +235,6 @@ func (db *Database) getUtensils(recipeID int64) ([]string, error) {
 	return utensils, nil
 }
 
-// Вспомогательная функция для получения шагов
 func (db *Database) getSteps(recipeID int64) ([]string, error) {
 	rows, err := db.Query("SELECT instruction FROM steps WHERE recipe_id = ? ORDER BY step_number", recipeID)
 	if err != nil {

@@ -1,6 +1,7 @@
 package database
 
 type Recipe struct {
+	UserId      int64
 	Name        string
 	Description string
 	Alcohol     []Ingredient
