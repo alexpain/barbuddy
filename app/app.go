@@ -3,16 +3,16 @@ package app
 import (
 	"context"
 	"fmt"
-	"github.com/alexpain/barbuddy/internal/config"
-	"github.com/alexpain/barbuddy/internal/database"
-	"github.com/alexpain/barbuddy/internal/telegram"
+	"github.com/alexpain/barbuddy/bots"
+	"github.com/alexpain/barbuddy/config"
+	"github.com/alexpain/barbuddy/database"
 	"golang.org/x/sync/errgroup"
 	"log"
 )
 
 type Application struct {
 	conf *config.Config
-	bot  *telegram.Bot
+	bot  *bots.Bot
 	db   *database.Database
 }
 
@@ -22,7 +22,7 @@ func New(ctx context.Context, conf *config.Config) (*Application, error) {
 		log.Fatalf("Error initializing database: %v", err)
 	}
 
-	bot, err := telegram.NewBot(conf.Bot.Token, db)
+	bot, err := bots.NewTelegramBot(conf.Bot.Token, db)
 	if err != nil {
 		return nil, err
 	}

@@ -1,8 +1,8 @@
-package telegram
+package bots
 
 import (
 	"fmt"
-	"github.com/alexpain/barbuddy/internal/database"
+	"github.com/alexpain/barbuddy/database"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"strings"
@@ -26,7 +26,7 @@ type Bot struct {
 	repository repositoryType
 }
 
-func NewBot(token string, repository repositoryType) (*Bot, error) {
+func NewTelegramBot(token string, repository repositoryType) (*Bot, error) {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		log.Panic(err)
