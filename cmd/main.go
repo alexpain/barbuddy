@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"github.com/alexpain/barbuddy/internal/app"
-	"github.com/alexpain/barbuddy/internal/config"
+	"github.com/alexpain/barbuddy/app"
+	"github.com/alexpain/barbuddy/config"
 	"golang.org/x/sync/errgroup"
 	"log"
 	"log/slog"
